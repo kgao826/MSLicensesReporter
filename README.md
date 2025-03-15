@@ -12,10 +12,10 @@ The logic app is repeated using a recurrence trigger so you can set the monthly 
 For the permissions, we use a system-assigned identity for the logic app to allow it to view licenses in MS Graph.
 
 ## Creating the Logic App
-First we deploy an Azure Logic app in a chosen resource group. On the left hand sidepane make sure to go to **Identity** and turn on System Managed Identity. We will need to assigned permissions to this logic app so that it can read user licensing information.
-You will need to assign the permission of Microsoft Graph **Directory.Read.All**. This will allow the app to view everything associated with MSGraph. If you do not need to get the total users in the organisation then you can search for a more granular permission.
+First, we deploy an Azure Logic app to a chosen resource group. On the left-hand sidepane, make sure to go to **Identity** and turn on System Managed Identity. We will need to assign permissions to this logic app so that it can read user licensing information.
+You will need to assign the permission of Microsoft Graph **Directory.Read.All**. This will allow the app to view everything associated with MSGraph. If you do not need to get the total users in the organisation, then you can search for a more granular permission.
 
-Create a group and start with the HTTP request for getting MS Licenses.
+Create a group and start with the HTTP request to get MS Licenses.
 
 |HTTP| Value |
 |--|--|
@@ -24,18 +24,15 @@ Create a group and start with the HTTP request for getting MS Licenses.
 | Headers | Content-type: application/json |
 | Authorisation | Managed Identity |
 
-The HTTP request is very simple. Paste this into the [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer) and have a look yourself what the output is.
+Paste the above URI into the [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer) and have a look yourself at what the output is.
 
-We parse the JSON output and you will notice in the JSON API response that the **consumedUnits** is the amount of licenses used and that in **prepaidUnits** the **enabled** value is the total amount of licenses.
+From that output, you can create a Parse JSON function next and parse the JSON output, and you will notice in the JSON API response that the **consumedUnits** is the amount of licenses used and that in **prepaidUnits**, the **enabled** value is the total amount of licenses.
 
-![image.png](/.attachments/image-fd23cfee-2294-4cc0-8b22-02cc25e58834.png)
+Then, we put the output into an HTML table so that it is formatted properly (see below). The license is the **skuPartNumber**, the amount used is the **consumedUnits** and the total is **enabled**.
 
-Put the output into a table so that it is formatted properly. 
-
-##Total Members in SEC-AAD-All Users
-To get all the users in that dynamic group we can use the Entra ID connector. The scope is called Total Employees:
-
-![image.png](/.attachments/image-15390635-1dae-4494-9e80-56dc0939c014.png)
+## Total Members in a group
+Depending on your organisation, you may only want to run licenses on a specific group. In this case, we need to create another scope (group) of functions in the logic app to get the total amount of users in a group. The group is a dynamic group, so during the time of this logic app's creation, there was no easy method to get total users in a group without looping through the entire group. Hopefully, there are easier solutions in the future.
+We can use the Entra ID connector to get all the users in that dynamic group. The scope is called Total Employees:
 
 The group ID for SEC-AAD-All Users is: **0112bd27-ad90-41fe-a200-754d9ae8dedd** and we use the Top parameter to ensure all the users are retrieved, otherwise it only retireves 100 by default.
 
