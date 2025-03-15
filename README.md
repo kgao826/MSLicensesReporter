@@ -1,5 +1,5 @@
 # MSLicensesReporter
-A repeating report produced for an Azure environment to find current licensing deployment. Includes searches for disabled users with licenses.
+A repeating report produced for an Azure environment to find current licensing deployment. Includes searches for disabled users with licenses. The report can be sent to an email address.
 
 ## Overview
 Function
@@ -13,9 +13,9 @@ For the permissions, we use a system-assigned identity for the logic app to allo
 
 ## Creating the Logic App
 First we deploy an Azure Logic app in a chosen resource group. On the left hand sidepane make sure to go to **Identity** and turn on System Managed Identity. We will need to assigned permissions to this logic app so that it can read user licensing information.
+You will need to assign the permission of Microsoft Graph **Directory.Read.All**. This will allow the app to view everything associated with MSGraph. If you do not need to get the total users in the organisation then you can search for a more granular permission.
 
-The HTTP request is very simple. Paste this into the [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer) and have a look yourself what the output is.
-
+Create a group and start with the HTTP request for getting MS Licenses.
 
 |HTTP| Value |
 |--|--|
@@ -23,6 +23,8 @@ The HTTP request is very simple. Paste this into the [Graph Explorer](https://de
 | URI | https://graph.microsoft.com/v1.0/subscribedSkus |
 | Headers | Content-type: application/json |
 | Authorisation | Managed Identity |
+
+The HTTP request is very simple. Paste this into the [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer) and have a look yourself what the output is.
 
 We parse the JSON output and you will notice in the JSON API response that the **consumedUnits** is the amount of licenses used and that in **prepaidUnits** the **enabled** value is the total amount of licenses.
 
