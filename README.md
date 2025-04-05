@@ -2,6 +2,8 @@
 A repeating report produced for an Azure environment to find current licensing deployment. Includes searches for disabled users with licenses. The report can be sent to an email address.
 
 ## Overview
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/MS%20Licenses%20Flow%20Diagram.png)
+
 Function
 This logic app is able to send an API request to Microsoft Graph and then retrieve the relevant license information for each license.
 
