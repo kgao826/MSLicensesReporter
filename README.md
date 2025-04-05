@@ -7,17 +7,25 @@ A repeating report produced for an Azure environment to find current licensing d
 Function
 This logic app is able to send an API request to Microsoft Graph and then retrieve the relevant license information for each license.
 
-Microsoft Graph displays the licenses using the SKU name which is slightly different to what we see on Entra ID. To get the proper names refer to this [link](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-service-plan-reference)
+Microsoft Graph displays the licenses using the SKU name, which is slightly different from what we see on Entra ID. To get the proper SKU names refer to this [link](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-service-plan-reference)
 
-The logic app is repeated using a recurrence trigger so you can set the monthly report to weekly or fortnightly etc.
+The logic app is repeated using a recurrence trigger so you can set the monthly report to weekly or fortnightly, etc.
+
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L1.png)
+
+I have also added a time converter so it runs local time (using convert time zone) at midnight. You can also set the time to run at when the office opens e.g. at 9am so it is most up to date. Remember by default is UTC timezone.
+
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L2.png) ![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L3.png)
 
 For the permissions, we use a system-assigned identity for the logic app to allow it to view licenses in MS Graph.
 
 ## Creating the Logic App
-First, we deploy an Azure Logic app to a chosen resource group. On the left-hand sidepane, make sure to go to **Identity** and turn on System Managed Identity. We will need to assign permissions to this logic app so that it can read user licensing information.
-You will need to assign the permission of Microsoft Graph **Directory.Read.All**. This will allow the app to view everything associated with MSGraph. If you do not need to get the total users in the organisation, then you can search for a more granular permission.
+First, we deploy an Azure Logic app to a chosen resource group. On the left-hand side pane, make sure to go to **Identity** and turn on System Managed Identity. We will need to assign permissions to this logic app so that it can read user licensing information.
+You will need to assign the permission of Microsoft Graph **Directory.Read.All**. This will allow the app to view everything associated with MSGraph. If you do not need to get the total users in the organisation, then you can search for a more granular permission in the Graph API.
 
 Create a group and start with the HTTP request to get MS Licenses.
+
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L4.png)
 
 |HTTP| Value |
 |--|--|
@@ -26,17 +34,25 @@ Create a group and start with the HTTP request to get MS Licenses.
 | Headers | Content-type: application/json |
 | Authorisation | Managed Identity |
 
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L5.png)
+
 Paste the above URI into the [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer) and have a look yourself at what the output is.
 
 From that output, you can create a Parse JSON function next and parse the JSON output, and you will notice in the JSON API response that the **consumedUnits** is the amount of licenses used and that in **prepaidUnits**, the **enabled** value is the total amount of licenses.
 
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L6.png)
+
+To get the scheme you must feed in sample data (e.g. from Graph Explorer) of the returned JSON so it can automtically generate a schema for you. **Select Use sample payload to generate schema**.
+
 Then, we put the output into an HTML table so that it is formatted properly (see below). The license is the **skuPartNumber**, the amount used is the **consumedUnits** and the total is **enabled**.
 
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L7.png)
+
 ## Total Members in a group
-Depending on your organisation, you may only want to run licenses on a specific group. In this case, we need to create another scope (group) of functions in the logic app to get the total amount of users in a group. The group is a dynamic group, so during the time of this logic app's creation, there was no easy method to get total users in a group without looping through the entire group. Hopefully, there are easier solutions in the future.
+Depending on your organisation, you may only want to run licenses on a specific group. In this case, we need to create another scope (group) of functions in the logic app to get the total amount of users in a group. Our group is a dynamic group, so during the time of this logic app's creation, there was no easy method to get total users in a group without looping through the entire group. Hopefully, there are easier solutions in the future.
 We can use the Entra ID connector to get all the users in that dynamic group. The scope is called Total Employees:
 
-The group ID for SEC-AAD-All Users is: **0112bd27-ad90-41fe-a200-754d9ae8dedd** and we use the Top parameter to ensure all the users are retrieved, otherwise it only retireves 100 by default.
+We use the Top parameter to ensure all the users are retrieved, otherwise it only retireves 100 by default.
 
 We then just do a simple loop of all the users in that group and increment the variable Total Members. This will return the total members in that group. Hopefully, there will be something more simple in the future like get group count.
 
