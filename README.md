@@ -263,10 +263,6 @@ The parse JSON format will be the same:
 
 This allows us to create a nice table for the output of the licence that into the HTML table.
 
-Example HTTP GET for E3 licenses:
-
-![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L8.png)
-
 ## Email
 Finally, the email format is very important, make sure we select the correct parameter as they are all called the same. It can be a bit confusing with everything the same but what you can do is search for the parameter e.g. "consumedUnits" then just make sure you click on the right header. For example:
 
