@@ -1,4 +1,4 @@
-# MSLicensesReporter
+![image](https://github.com/user-attachments/assets/413e8c7e-eb4f-456a-ac8e-0cd126b1ce05)# MSLicensesReporter
 A repeating report produced for an Azure environment to find current licensing deployment. Includes searches for disabled users with licenses. The report can be sent to an email address.
 
 ## Overview
@@ -42,7 +42,7 @@ From that output, you can create a Parse JSON function next and parse the JSON o
 
 ![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L6.png)
 
-To get the scheme you must feed in sample data (e.g. from Graph Explorer) of the returned JSON so it can automtically generate a schema for you. **Select Use sample payload to generate schema**.
+To get the scheme, you must feed in sample data (e.g. from Graph Explorer) of the returned JSON so it can automatically generate a schema for you. **Select Use sample payload to generate schema**.
 
 Then, we put the output into an HTML table so that it is formatted properly (see below). The license is the **skuPartNumber**, the amount used is the **consumedUnits** and the total is **enabled**.
 
@@ -52,14 +52,24 @@ Then, we put the output into an HTML table so that it is formatted properly (see
 Depending on your organisation, you may only want to run licenses on a specific group. In this case, we need to create another scope (group) of functions in the logic app to get the total amount of users in a group. Our group is a dynamic group, so during the time of this logic app's creation, there was no easy method to get total users in a group without looping through the entire group. Hopefully, there are easier solutions in the future.
 We can use the Entra ID connector to get all the users in that dynamic group. The scope is called Total Employees:
 
-We use the Top parameter to ensure all the users are retrieved, otherwise it only retireves 100 by default.
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L10.png)
+
+Create a variable to store the total employees, then loop through each member by incrementing that variable. 
+
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L11.png)
+
+Use the Get group members function from Entra. We use the Top parameter to ensure all the users are retrieved, otherwise it only retireves 100 by default. I set the top to 999 as there are only 200 employees.
+
+Create the for loop and loop through the previous output. Use increment variable and set to 1.
 
 We then just do a simple loop of all the users in that group and increment the variable Total Members. This will return the total members in that group. Hopefully, there will be something more simple in the future like get group count.
 
 ## Disabled Accounts with Licenses
 This one is a bit more complicated as we directly put a filter in the URI of the HTTP request.
 
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L12.png)
 
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L13.png)
 
 |HTTP| Value |
 |--|--|
@@ -82,6 +92,14 @@ https://graph.microsoft.com/v1.0/users?$select=displayName,userPrincipalName,acc
 
 **IMPORTANT!**
 You will notice in the Headers that the **ConsistencyLevel** is set to **eventual**. This allows MS Graph API to parse $Select and $Filter functions. Otherwise, an error will be returned. So it must be included
+
+Parse the JSON response, remember to use a sample response to generate the schema, you can go to Graph Explorer to do that.
+
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L14.png)
+
+Parse the JSON output in a nicely formatted HTML table:
+
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L15.png)
 
 ## Licenses
 To get the product name, ID number and string ID. Refer to this [link](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-service-plan-reference).
