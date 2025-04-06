@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/413e8c7e-eb4f-456a-ac8e-0cd126b1ce05)# MSLicensesReporter
+# MSLicensesReporter
 A repeating report produced for an Azure environment to find current licensing deployment. Includes searches for disabled users with licenses. The report can be sent to an email address.
 
 ## Overview
