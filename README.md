@@ -56,10 +56,9 @@ We use the Top parameter to ensure all the users are retrieved, otherwise it onl
 
 We then just do a simple loop of all the users in that group and increment the variable Total Members. This will return the total members in that group. Hopefully, there will be something more simple in the future like get group count.
 
-##Disabled Accounts with Licenses
+## Disabled Accounts with Licenses
 This one is a bit more complicated as we directly put a filter in the URI of the HTTP request.
 
-![image.png](/.attachments/image-3ed259d8-7277-406a-9ef5-cf56d97ac811.png)
 
 
 |HTTP| Value |
@@ -263,6 +262,10 @@ The parse JSON format will be the same:
 ```
 
 This allows us to create a nice table for the output of the licence that into the HTML table.
+
+Example HTTP GET for E3 licenses:
+
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L8.png)
 
 ## Email
 Finally, the email format is very important, make sure we select the correct parameter as they are all called the same. It can be a bit confusing with everything the same but what you can do is search for the parameter e.g. "consumedUnits" then just make sure you click on the right header. For example:
