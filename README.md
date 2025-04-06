@@ -82,13 +82,12 @@ https://graph.microsoft.com/v1.0/users?$select=displayName,userPrincipalName,acc
 ```
 
 **IMPORTANT!**
-You will notice in the Headers that the **ConsistencyLevel** is set to **eventual**. This allows MS Graph API to parse $Select and $Filter functions. Otherwise, an error will be returned.
+You will notice in the Headers that the **ConsistencyLevel** is set to **eventual**. This allows MS Graph API to parse $Select and $Filter functions. Otherwise, an error will be returned. So it must be included
 
-##Licenses
-#315956 
+## Licenses
 To get the product name, ID number and string ID. Refer to this [link](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-service-plan-reference).
 
-The following licenses are included in the logic app, if you want to add any more simply add to this list.
+The following licenses are included in the logic app; if you want to add any more, add to this list.
 
 | **String ID** | **Product Name** | **ID Number** |
 |--|--|--|
@@ -115,7 +114,7 @@ We then put the HTTP request in this format to get the number of licenses and as
 | Headers | Content-type: application/json |
 | Authorisation | Manage Identity |
 
-All the JSON response will be in the same format as shown below:
+All the JSON responses will be in the same format as shown below:
 ```
 {
     "properties": {
@@ -203,10 +202,10 @@ All the JSON response will be in the same format as shown below:
 }
 ```
 
-Just copy and paste that JSON format into the Parse JSON and it will get all the right attributes for you. Remember to name your Actions with good names otherwise good luck trying to select the right parameters.
+Just copy and paste that JSON format into the Parse JSON tool in the logic app JSON schema generator and it will get all the right attributes for you. Remember to name your Actions with good names otherwise good luck trying to select the right parameters.
 
 Now to get the users assigned to the license we can use the following format:
-Important! We use the license half ID so for example, Exchange Online (Plan 2):
+**Important! We use the license half ID so for example, Exchange Online (Plan 2):**
 ```
 71a9d935-2760-4973-b514-a5c33566cc4b_19ec0d23-8335-4cbd-94ac-6050e30712fa
 ```
@@ -265,10 +264,10 @@ The parse JSON format will be the same:
 
 This allows us to create a nice table for the output of the licence that into the HTML table.
 
-##Email
+## Email
 Finally, the email format is very important, make sure we select the correct parameter as they are all called the same. It can be a bit confusing with everything the same but what you can do is search for the parameter e.g. "consumedUnits" then just make sure you click on the right header. For example:
 
-![image.png](/.attachments/image-9b10843d-50ad-4c6e-a50c-69a127e203be.png)
+![img](https://github.com/kgao826/MSLicensesReporter/blob/main/images/L9.png)
 
 **Email Format:**
 
@@ -280,7 +279,7 @@ Finally, the email format is very important, make sure we select the correct par
 | Assigned Users |
 | HTML List of users |
 
-##Adding another license
+## Adding another license
 To add another license GET request simply follow the same format for each scope. You need to do the same two steps:
 - Get license amount by parsing skuID
 - Get assigned licenses users list
